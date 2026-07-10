@@ -8,6 +8,7 @@ A comprehensive and evolving guide for securing both Linux and Windows server en
 - [Linux Security Guide](./Linux/README.md)
 - [Windows Security Guide](./Windows/README.md)
 - [Automation Scripts](./Automation/README.md)
+- [Detailed Documentation](./Documentation/README.md)
 - [Advanced Security Topics](./Advanced/README.md)
 - [Contributing](#contributing)
 - [License](#license)
@@ -46,6 +47,15 @@ For the full guide, see the [Windows Security Guide](./Windows/README.md).
 This section provides automation scripts (Ansible for Linux, PowerShell for Windows) to help streamline the implementation of the hardening steps outlined in this repository. These scripts aim to reduce manual effort and ensure consistent application of security configurations.
 
 For more details, see the [Automation Scripts](./Automation/README.md).
+
+## 📚 Detailed Documentation
+
+This section provides comprehensive guides and visual aids to help you understand and implement the security practices covered in this repository.
+
+- **[Automation Guides](./Documentation/Automation/README.md)**: Detailed instructions for using the Ansible playbooks and PowerShell scripts.
+- **[Security Diagrams](./Documentation/Diagrams/README.md)**: Visual representations of secure network architectures and security workflows.
+
+For more information, see the [Documentation Section](./Documentation/README.md).
 
 ## 🚀 Advanced Security Topics
 

@@ -1,0 +1,32 @@
+direction: right
+
+cloud: Cloud {
+  internet: Internet
+  vpn_gateway: VPN Gateway
+}
+
+firewall: Firewall {
+  shape: rectangle
+}
+
+dmz: DMZ {
+  web_server: Web Server
+  app_server: Application Server
+}
+
+internal_network: Internal Network {
+  db_server: Database Server
+  management_server: Management Server
+}
+
+internet -> vpn_gateway: VPN Tunnel
+vpn_gateway -> firewall: Encrypted Traffic
+firewall -> dmz: Filtered Traffic
+dmz -> internal_network: Filtered Traffic
+management_server -> firewall: Management Access
+management_server -> db_server: Secure Access
+app_server -> db_server: Secure Access
+
+
+  style.stroke-dash: 2
+  style.stroke: #888

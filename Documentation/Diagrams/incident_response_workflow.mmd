@@ -1,0 +1,9 @@
+graph TD
+    A[Event Detected] --> B{Analyze & Prioritize}
+    B -->|High Priority| C[Containment]
+    B -->|Low Priority| D[Log & Monitor]
+    C --> E[Eradication]
+    E --> F[Recovery]
+    F --> G[Post-Incident Analysis]
+    G --> A
+    D --> A
