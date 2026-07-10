@@ -9,6 +9,7 @@ A comprehensive and evolving guide for securing both Linux and Windows server en
 - [Windows Security Guide](./Windows/README.md)
 - [Automation Scripts](./Automation/README.md)
 - [Detailed Documentation](./Documentation/README.md)
+- [General Best Practices](./Best-Practices/README.md)
 - [Advanced Security Topics](./Advanced/README.md)
 - [Contributing](#contributing)
 - [License](#license)
@@ -56,6 +57,12 @@ This section provides comprehensive guides and visual aids to help you understan
 - **[Security Diagrams](./Documentation/Diagrams/README.md)**: Visual representations of secure network architectures and security workflows.
 
 For more information, see the [Documentation Section](./Documentation/README.md).
+
+## ✨ General Best Practices
+
+This section provides overarching security recommendations that are applicable across both Linux and Windows server environments, focusing on fundamental principles that enhance overall security posture.
+
+For more details, see the [General Best Practices Section](./Best-Practices/README.md).
 
 ## 🚀 Advanced Security Topics
 
