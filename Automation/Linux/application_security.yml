@@ -1,0 +1,45 @@
+---
+- name: Linux Application Security (Nginx Hardening)
+  hosts: all
+  become: yes
+  tasks:
+    - name: Ensure Nginx is installed
+      package:
+        name: nginx
+        state: present
+
+    - name: Disable server tokens in nginx.conf
+      lineinfile:
+        path: /etc/nginx/nginx.conf
+        regexp: "^\s*server_tokens"
+        line: "    server_tokens off;"
+        insertafter: "^http {"
+      notify: Reload nginx
+
+    - name: Add security headers to Nginx default site
+      blockinfile:
+        path: /etc/nginx/sites-available/default
+        marker: "# {mark} ANSIBLE MANAGED BLOCK - Nginx Security Headers"
+        block: |
+          add_header Content-Security-Policy "default-src 'self'; object-src 'none'; base-uri 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; media-src 'self'; frame-ancestors 'self'; form-action 'self';";
+          add_header X-Frame-Options SAMEORIGIN always;
+          add_header X-Xss-Protection "1; mode=block" always;
+          add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+          add_header Permissions-Policy "geolocation=(),midi=(),sync-xhr=(),microphone=(),camera=(),magnetometer=(),gyroscope=(),fullscreen=(self),payment=()";
+          add_header X-Content-Type-Options nosniff always;
+        insertafter: "listen 80 default_server;"
+      notify: Reload nginx
+
+    - name: Set client_max_body_size in nginx.conf
+      lineinfile:
+        path: /etc/nginx/nginx.conf
+        regexp: "^\s*client_max_body_size"
+        line: "    client_max_body_size 10M;"
+        insertafter: "^http {"
+      notify: Reload nginx
+
+  handlers:
+    - name: Reload nginx
+      service:
+        name: nginx
+        state: reloaded

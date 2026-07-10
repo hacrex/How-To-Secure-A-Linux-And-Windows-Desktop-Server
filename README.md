@@ -5,9 +5,10 @@ A comprehensive and evolving guide for securing both Linux and Windows server en
 ## 📖 Table of Contents
 
 - [Introduction](#introduction)
-- [Linux Security Guide](./Linux/README_Linux.md)
-- [Windows Security Guide](./Windows/WINDOWS_SERVER_SECURITY.md)
-- [Advanced Security Topics](#advanced-security-topics)
+- [Linux Security Guide](./Linux/README.md)
+- [Windows Security Guide](./Windows/README.md)
+- [Automation Scripts](./Automation/README.md)
+- [Advanced Security Topics](./Advanced/README.md)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -26,7 +27,7 @@ Our Linux security section provides in-depth guides on hardening various Linux d
 - Application security (e.g., Nginx).
 - Auditing and intrusion detection.
 
-For the full guide, see the [Linux Security Guide](./Linux/README_Linux.md).
+For the full guide, see the [Linux Security Guide](./Linux/README.md).
 
 ## 🪟 Windows Security
 
@@ -38,7 +39,13 @@ The Windows security section focuses on hardening Windows Server environments, d
 - Encryption and data protection.
 - Auditing and monitoring.
 
-For the full guide, see the [Windows Security Guide](./Windows/WINDOWS_SERVER_SECURITY.md).
+For the full guide, see the [Windows Security Guide](./Windows/README.md).
+
+## ⚙️ Automation Scripts
+
+This section provides automation scripts (Ansible for Linux, PowerShell for Windows) to help streamline the implementation of the hardening steps outlined in this repository. These scripts aim to reduce manual effort and ensure consistent application of security configurations.
+
+For more details, see the [Automation Scripts](./Automation/README.md).
 
 ## 🚀 Advanced Security Topics
 
@@ -47,6 +54,8 @@ In addition to OS-specific hardening, we also cover advanced topics such as:
 - **Container Security**: Hardening Docker and Kubernetes environments.
 - **Cloud Security**: Best practices for AWS, Azure, and GCP.
 - **Incident Response**: Basic procedures for responding to security incidents.
+
+For the full guide, see the [Advanced Security Topics](./Advanced/README.md).
 
 ## 🤝 Contributing
 

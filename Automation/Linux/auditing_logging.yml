@@ -1,0 +1,85 @@
+---
+- name: Linux Auditing and Logging
+  hosts: all
+  become: yes
+  tasks:
+    - name: Ensure rsyslog is installed
+      package:
+        name: rsyslog
+        state: present
+
+    - name: Secure /var/log permissions
+      file:
+        path: /var/log
+        mode: "u=rwx,g=rx,o="
+        recurse: yes
+
+    - name: Ensure AIDE is installed
+      package:
+        name: aide
+        state: present
+
+    - name: Initialize AIDE database (first run only)
+      command: aide --init
+      args:
+        creates: /var/lib/aide/aide.db
+
+    - name: Move AIDE database to correct location
+      command: mv /var/lib/aide/aide.db.new /var/lib/aide/aide.db
+      args:
+        removes: /var/lib/aide/aide.db.new
+
+    - name: Schedule daily AIDE check via cron
+      cron:
+        name: "AIDE daily check"
+        minute: "0"
+        hour: "5"
+        job: "/usr/bin/aide --check > /var/log/aide_check.log"
+        user: root
+
+    - name: Ensure rkhunter is installed
+      package:
+        name: rkhunter
+        state: present
+
+    - name: Update rkhunter data files
+      command: rkhunter --update
+
+    - name: Update rkhunter properties
+      command: rkhunter --propupd
+
+    - name: Schedule daily rkhunter check via cron
+      cron:
+        name: "Rkhunter daily check"
+        minute: "30"
+        hour: "5"
+        job: "/usr/bin/rkhunter --checkall --report-warnings-only > /var/log/rkhunter_check.log"
+        user: root
+
+    - name: Ensure chkrootkit is installed
+      package:
+        name: chkrootkit
+        state: present
+
+    - name: Schedule daily chkrootkit check via cron
+      cron:
+        name: "Chkrootkit daily check"
+        minute: "0"
+        hour: "6"
+        job: "/usr/sbin/chkrootkit > /var/log/chkrootkit_check.log"
+        user: root
+
+    - name: Ensure lynis is installed
+      package:
+        name: lynis
+        state: present
+
+    - name: Schedule weekly Lynis audit via cron
+      cron:
+        name: "Lynis weekly audit"
+        minute: "0"
+        hour: "3"
+        day: "*"
+        weekday: "0"
+        job: "/usr/bin/lynis audit system > /var/log/lynis_audit.log"
+        user: root

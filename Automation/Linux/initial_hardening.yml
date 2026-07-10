@@ -1,0 +1,35 @@
+---
+- name: Initial Linux Server Hardening
+  hosts: all
+  become: yes
+  tasks:
+    - name: Update apt cache and upgrade packages (Debian/Ubuntu)
+      apt:
+        update_cache: yes
+        upgrade: dist
+      when: ansible_os_family == "Debian"
+
+    - name: Update yum cache and upgrade packages (RedHat/CentOS)
+      yum:
+        name: '*'
+        state: latest
+      when: ansible_os_family == "RedHat"
+
+    - name: Install unattended-upgrades (Debian/Ubuntu)
+      apt:
+        name: unattended-upgrades
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Ensure unattended-upgrades is enabled (Debian/Ubuntu)
+      copy:
+        dest: /etc/apt/apt.conf.d/20auto-upgrades
+        content: |
+          APT::Periodic::Update-Package-Lists "1";
+          APT::Periodic::Unattended-Upgrade "1";
+      when: ansible_os_family == "Debian"
+
+    - name: Remove unused packages (Debian/Ubuntu)
+      apt:
+        autoremove: yes
+      when: ansible_os_family == "Debian"

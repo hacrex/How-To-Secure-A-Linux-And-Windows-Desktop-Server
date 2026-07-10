@@ -1,0 +1,112 @@
+---
+- name: Linux User and Account Management
+  hosts: all
+  become: yes
+  vars:
+    ssh_users: # Define users who should have SSH access
+      - username: adminuser
+        ssh_key: "ssh-rsa AAAAB3NzaC..."
+
+  tasks:
+    - name: Ensure strong password policy (pam_pwquality)
+      block:
+        - name: Install libpam-pwquality (Debian/Ubuntu)
+          apt:
+            name: libpam-pwquality
+            state: present
+          when: ansible_os_family == "Debian"
+
+        - name: Configure pwquality.conf
+          lineinfile:
+            path: /etc/security/pwquality.conf
+            regexp: "^{{ item.key }}"
+            line: "{{ item.key }} = {{ item.value }}"
+          loop:
+            - { key: 'minlen', value: '14' }
+            - { key: 'ucredit', value: '-1' }
+            - { key: 'lcredit', value: '-1' }
+            - { key: 'dcredit', value: '-1' }
+            - { key: 'ocredit', value: '-1' }
+            - { key: 'maxrepeat', value: '3' }
+
+    - name: Configure password expiration in login.defs
+      lineinfile:
+        path: /etc/login.defs
+        regexp: "^{{ item.key }}"
+        line: "{{ item.key }}	{{ item.value }}"
+      loop:
+        - { key: 'PASS_MAX_DAYS', value: '90' }
+        - { key: 'PASS_MIN_DAYS', value: '0' }
+        - { key: 'PASS_WARN_AGE', value: '7' }
+
+    - name: Create SSH users and deploy SSH keys
+      loop: "{{ ssh_users }}"
+      loop_control:
+        loop_var: user_item
+      block:
+        - name: Create user {{ user_item.username }}
+          user:
+            name: "{{ user_item.username }}"
+            state: present
+            create_home: yes
+            shell: /bin/bash
+
+        - name: Ensure .ssh directory exists for {{ user_item.username }}
+          file:
+            path: "/home/{{ user_item.username }}/.ssh"
+            state: directory
+            mode: '0700'
+            owner: "{{ user_item.username }}"
+            group: "{{ user_item.username }}"
+
+        - name: Add SSH public key for {{ user_item.username }}
+          authorized_key:
+            user: "{{ user_item.username }}"
+            key: "{{ user_item.ssh_key }}"
+            state: present
+
+    - name: Disable password authentication for SSH
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: "^#?PasswordAuthentication"
+        line: "PasswordAuthentication no"
+        state: present
+      notify: Restart sshd
+
+    - name: Disable root login via SSH
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: "^#?PermitRootLogin"
+        line: "PermitRootLogin no"
+        state: present
+      notify: Restart sshd
+
+    - name: Add users to sudo group
+      user:
+        name: "{{ item.username }}"
+        groups: sudo
+        append: yes
+      loop: "{{ ssh_users }}"
+      when: ansible_os_family == "Debian"
+
+    - name: Add users to wheel group (RedHat/CentOS)
+      user:
+        name: "{{ item.username }}"
+        groups: wheel
+        append: yes
+      loop: "{{ ssh_users }}"
+      when: ansible_os_family == "RedHat"
+
+    - name: Restrict su command to wheel group (RedHat/CentOS)
+      lineinfile:
+        path: /etc/pam.d/su
+        regexp: "^#auth\s+required\s+pam_wheel.so use_uid"
+        line: "auth            required        pam_wheel.so use_uid"
+        state: present
+      when: ansible_os_family == "RedHat"
+
+  handlers:
+    - name: Restart sshd
+      service:
+        name: sshd
+        state: restarted
