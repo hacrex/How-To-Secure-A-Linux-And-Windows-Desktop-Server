@@ -10,6 +10,8 @@ A comprehensive and evolving guide for securing both Linux and Windows server en
 - [Automation Scripts](./Automation/README.md)
 - [Detailed Documentation](./Documentation/README.md)
 - [General Best Practices](./Best-Practices/README.md)
+- [Threat Modeling](./Threat-Modeling/README.md)
+- [Monitoring and Logging](./Monitoring-and-Logging/README.md)
 - [Advanced Security Topics](./Advanced/README.md)
 - [Contributing](#contributing)
 - [License](#license)
@@ -59,6 +61,24 @@ This section provides comprehensive guides and visual aids to help you understan
 For more information, see the [Documentation Section](./Documentation/README.md).
 
 ## ✨ General Best Practices
+
+This section provides overarching security recommendations that are applicable across both Linux and Windows server environments, focusing on fundamental principles that enhance overall security posture.
+
+For more details, see the [General Best Practices Section](./Best-Practices/README.md).
+
+## 🕵️ Threat Modeling
+
+Threat modeling is a structured approach to identifying potential threats, vulnerabilities, and countermeasures. This section provides examples of threat models for common server deployments.
+
+For more details, see the [Threat Modeling Section](./Threat-Modeling/README.md).
+
+## 📊 Monitoring and Logging
+
+This section covers best practices for security monitoring, logging, and understanding common threats like ransomware and malware, as well as securing browser settings and network ports.
+
+For more details, see the [Monitoring and Logging Section](./Monitoring-and-Logging/README.md).
+
+## 🚀 Advanced Security Topics
 
 This section provides overarching security recommendations that are applicable across both Linux and Windows server environments, focusing on fundamental principles that enhance overall security posture.
 
