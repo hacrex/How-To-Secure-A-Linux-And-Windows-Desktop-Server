@@ -12,6 +12,8 @@ A comprehensive and evolving guide for securing both Linux and Windows server en
 - [General Best Practices](./Best-Practices/README.md)
 - [Threat Modeling](./Threat-Modeling/README.md)
 - [Monitoring and Logging](./Monitoring-and-Logging/README.md)
+- [Incident Response](./Incident-Response/README.md)
+- [Cloud Security](./Cloud-Security/README.md)
 - [Advanced Security Topics](./Advanced/README.md)
 - [Contributing](#contributing)
 - [License](#license)
@@ -78,11 +80,17 @@ This section covers best practices for security monitoring, logging, and underst
 
 For more details, see the [Monitoring and Logging Section](./Monitoring-and-Logging/README.md).
 
-## 🚀 Advanced Security Topics
+## 🚨 Incident Response
 
-This section provides overarching security recommendations that are applicable across both Linux and Windows server environments, focusing on fundamental principles that enhance overall security posture.
+This section provides structured playbooks for common security incidents, guiding teams through detection, analysis, containment, eradication, and recovery phases.
 
-For more details, see the [General Best Practices Section](./Best-Practices/README.md).
+For more details, see the [Incident Response Section](./Incident-Response/README.md).
+
+## ☁️ Cloud Security
+
+This section outlines best practices for securing virtual machines and other resources in major cloud providers, including AWS, Azure, and GCP, addressing the shared responsibility model.
+
+For more details, see the [Cloud Security Section](./Cloud-Security/README.md).
 
 ## 🚀 Advanced Security Topics
 
