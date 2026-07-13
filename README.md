@@ -94,13 +94,9 @@ For more details, see the [Cloud Security Section](./Cloud-Security/README.md).
 
 ## 🚀 Advanced Security Topics
 
-In addition to OS-specific hardening, we also cover advanced topics such as:
+This section covers advanced security topics that are generally applicable to both Linux and Windows server environments, addressing modern infrastructure challenges like containerization and cloud deployments.
 
-- **Container Security**: Hardening Docker and Kubernetes environments.
-- **Cloud Security**: Best practices for AWS, Azure, and GCP.
-- **Incident Response**: Basic procedures for responding to security incidents.
-
-For the full guide, see the [Advanced Security Topics](./Advanced/README.md).
+For more details, see the [Advanced Security Topics](./Advanced/README.md).
 
 ## 🤝 Contributing
 

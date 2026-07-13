@@ -9,6 +9,7 @@ This directory contains playbooks for common security incidents, providing step-
 - [02 - Malware Infection Playbook](./02-malware-infection-playbook.md)
 - [03 - Denial of Service (DoS/DDoS) Playbook](./03-denial-of-service-playbook.md)
 - [04 - Data Breach Playbook](./04-data-breach-playbook.md)
+- [05 - Phishing Incident Playbook](./05-phishing-incident-playbook.md)
 
 ## Introduction to Incident Response Playbooks
 
