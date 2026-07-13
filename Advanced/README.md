@@ -9,6 +9,7 @@ This section covers advanced security topics that are generally applicable to bo
 - [02 - Cloud Server Security](./02-cloud-server-security.md)
 - [03 - Security Monitoring and Incident Response](./03-security-monitoring-and-incident-response.md)
 - [04 - Kubernetes Security](./04-kubernetes-security.md)
+- [05 - Serverless Security](./05-serverless-security.md)
 
 ## Introduction
 

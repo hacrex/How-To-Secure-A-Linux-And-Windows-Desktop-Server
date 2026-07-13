@@ -10,6 +10,7 @@ This directory contains playbooks for common security incidents, providing step-
 - [03 - Denial of Service (DoS/DDoS) Playbook](./03-denial-of-service-playbook.md)
 - [04 - Data Breach Playbook](./04-data-breach-playbook.md)
 - [05 - Phishing Incident Playbook](./05-phishing-incident-playbook.md)
+- [06 - Ransomware Incident Playbook](./06-ransomware-incident-playbook.md)
 
 ## Introduction to Incident Response Playbooks
 
@@ -22,4 +23,4 @@ Incident response playbooks are predefined, documented procedures that guide sec
 *   **Recovery**: Steps to restore affected systems and services.
 *   **Post-Incident Activity**: Lessons learned and improvements.
 
-These playbooks are adaptable and should be customized to fit your organization's specific environment, tools, and policies.
+These playbooks are adaptable and should be customized to fit your organization\'s specific environment, tools, and policies.

@@ -1,0 +1,1 @@
+/home/ubuntu/How-To-Secure-A-Linux-And-Windows-Server/Cloud-Security/05-serverless-security-best-practices.md
