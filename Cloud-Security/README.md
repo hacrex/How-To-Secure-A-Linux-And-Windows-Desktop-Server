@@ -10,6 +10,7 @@ This directory provides best practices and recommendations for securing virtual 
 - [03 - GCP Security Best Practices](./03-gcp-security-best-practices.md)
 - [04 - Kubernetes Security Best Practices](./04-kubernetes-security-best-practices.md)
 - [05 - Serverless Security Best Practices](./05-serverless-security-best-practices.md)
+- [06 - Container Security Best Practices](./06-container-security-best-practices.md)
 
 ## Introduction to Cloud Security
 
