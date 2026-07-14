@@ -100,7 +100,7 @@ For more details, see the [Advanced Security Topics](./Advanced/README.md).
 
 ## 🤝 Contributing
 
-We welcome contributions from the community! If you have suggestions, improvements, or new content to add, please feel free to fork the repository and submit a pull request.
+We welcome contributions from the community! If you have suggestions, improvements, or new content to add, please see our [Contributing Guidelines](CONTRIBUTING.md) for information on how to submit pull requests, report bugs, or suggest enhancements.
 
 ## ⚖️ License
 
