@@ -1,0 +1,24 @@
+# CI/CD Pipeline Security Diagram
+
+direction: right
+
+developer: Developer
+git_repo: Git Repository
+ci_server: CI Server
+scan_stage: Security Scan
+build_stage: Build Container
+test_stage: Test Stage
+sign_stage: Sign Image
+registry: Container Registry
+deploy_stage: Deploy
+production: Production
+
+developer --> git_repo: Push Code
+git_repo --> ci_server: Trigger Pipeline
+ci_server --> scan_stage: Code Scan
+scan_stage --> build_stage: Build
+build_stage --> test_stage: Test
+test_stage --> sign_stage: Sign
+sign_stage --> registry: Push Image
+registry --> deploy_stage: Deploy
+deploy_stage --> production: Release

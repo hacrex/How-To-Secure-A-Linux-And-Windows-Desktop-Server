@@ -500,7 +500,7 @@ SSH is a door into your server. This is especially true if you are opening ports
 - Mozilla's OpenSSH guidelines for OpenSSH 6.7+ at https://infosec.mozilla.org/guidelines/openssh#modern-openssh-67
 - https://linux-audit.com/audit-and-harden-your-ssh-configuration/
 - https://www.ssh.com/ssh/sshd_config/
-- https://www.techbrown.com/harden-ssh-secure-linux-vps-server/ (broken; try http://web.archive.org/web/20200413100933/https://www.techbrown.com/harden-ssh-secure-linux-vps-server/)
+- https://web.archive.org/web/20200413100933/https://www.techbrown.com/harden-ssh-secure-linux-vps-server/ (archived)
 - https://serverfault.com/questions/660160/openssh-difference-between-internal-sftp-and-sftp-server/660325
 - `man sshd_config`
 - Thanks to [than0s](https://github.com/than0s) for [how to find duplicate settings](https://github.com/imthenachoman/How-To-Secure-A-Linux-Server/issues/38).

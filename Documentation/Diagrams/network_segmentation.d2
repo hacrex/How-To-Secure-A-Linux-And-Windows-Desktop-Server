@@ -1,0 +1,42 @@
+# Network Segmentation Diagram
+
+direction: right
+
+internet: Internet
+edge_firewall: Edge Firewall
+
+dmz_zone: DMZ Zone {
+  web_server: Web Server
+  mail_server: Mail Server
+  dns_server: DNS Server
+}
+
+internal_firewall: Internal Firewall
+
+app_zone: Application Zone {
+  app_server_1: App Server 1
+  app_server_2: App Server 2
+}
+
+db_firewall: Database Firewall
+
+db_zone: Database Zone {
+  db_primary: Primary DB
+  db_replica: Replica DB
+}
+
+mgmt_network: Management Network {
+  bastion: Bastion Host
+  monitoring: Monitoring Server
+  backup: Backup Server
+}
+
+internet --> edge_firewall: Filtered Traffic
+edge_firewall --> dmz_zone: Public Access
+dmz_zone --> internal_firewall: App Requests
+internal_firewall --> app_zone: Internal Traffic
+app_zone --> db_firewall: DB Queries
+db_firewall --> db_zone: Secure Access
+mgmt_network --> bastion: Admin Access
+bastion --> app_zone: Management
+bastion --> db_zone: Management
