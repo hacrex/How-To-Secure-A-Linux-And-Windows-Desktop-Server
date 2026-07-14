@@ -1,0 +1,28 @@
+# Cloud Shared Responsibility Model
+
+direction: down
+
+cloud_provider: Cloud Provider {
+  physical: Physical Security
+  network: Network Infrastructure
+  hypervisor: Hypervisor
+}
+
+customer: Customer {
+  data: Data
+  identity: Identity and Access
+  os: Operating System
+  apps: Applications
+  config: Configuration
+}
+
+iaas: IaaS Boundary
+paas: PaaS Boundary
+saas: SaaS Boundary
+
+cloud_provider --> iaas: Infrastructure
+customer --> iaas: OS and Above
+iaas --> paas: Platform Services
+customer --> paas: Apps and Data
+paas --> saas: Full Application
+customer --> saas: Data Only

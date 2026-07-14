@@ -1,0 +1,32 @@
+# Threat Modeling Process Diagram
+
+direction: right
+
+assets: Assets to Protect {
+  data: Sensitive Data
+  systems: Critical Systems
+  users: User Accounts
+}
+
+threats: Threat Sources {
+  external: External Attackers
+  internal: Insider Threats
+  accidental: Accidental Exposure
+}
+
+vulnerabilities: Vulnerabilities {
+  software: Software Flaws
+  config: Misconfigurations
+  process: Weak Processes
+}
+
+controls: Security Controls {
+  preventive: Preventive Controls
+  detective: Detective Controls
+  corrective: Corrective Controls
+}
+
+assets --> vulnerabilities: Exposes
+threats --> vulnerabilities: Exploits
+vulnerabilities --> controls: Mitigated By
+controls --> assets: Protects
