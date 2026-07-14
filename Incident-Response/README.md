@@ -11,6 +11,7 @@ This directory contains playbooks for common security incidents, providing step-
 - [04 - Data Breach Playbook](./04-data-breach-playbook.md)
 - [05 - Phishing Incident Playbook](./05-phishing-incident-playbook.md)
 - [06 - Ransomware Incident Playbook](./06-ransomware-incident-playbook.md)
+- [07 - DDoS Attack Incident Playbook](./07-ddos-attack-incident-playbook.md)
 
 ## Introduction to Incident Response Playbooks
 
