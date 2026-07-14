@@ -147,7 +147,124 @@ graph TD
 *   Use Mandatory Access Controls (MAC) like SELinux/AppArmor (Linux).
 *   Conduct regular security audits and penetration testing.
 
-## 5. References
+## 5. Risk Rating Examples
+
+The following table provides example risk ratings for identified threats using a simplified DREAD-like scoring model (1-10 scale):
+
+| Threat Category | Example Threat | Damage Potential | Reproducibility | Exploitability | Affected Users | Discoverability | Average Risk | Priority |
+|----------------|----------------|------------------|-----------------|----------------|----------------|-----------------|--------------|----------|
+| Spoofing | Session hijacking via stolen token | 8 | 6 | 7 | 9 | 5 | 7.0 | High |
+| Tampering | SQL Injection attack | 9 | 7 | 8 | 10 | 8 | 8.4 | Critical |
+| Information Disclosure | Verbose error messages exposing stack traces | 5 | 9 | 9 | 3 | 9 | 7.0 | High |
+| Denial of Service | DDoS attack on web endpoint | 7 | 8 | 6 | 10 | 7 | 7.6 | High |
+| Elevation of Privilege | Local privilege escalation via unpatched kernel | 10 | 5 | 4 | 2 | 6 | 5.4 | Medium |
+
+**Risk Priority Guidelines:**
+*   **Critical (8.0-10.0)**: Immediate remediation required
+*   **High (6.0-7.9)**: Remediate within 30 days
+*   **Medium (4.0-5.9)**: Remediate within 90 days
+*   **Low (1.0-3.9)**: Remediate as part of regular maintenance
+
+## 6. Practical Verification Steps
+
+After implementing countermeasures, verify their effectiveness with these practical tests:
+
+### 6.1 Authentication & Session Management Verification
+
+```bash
+# Test MFA enforcement
+curl -v https://your-server.com/login
+
+# Test session timeout (wait and check if session persists)
+curl -b session_cookie.txt https://your-server.com/dashboard
+
+# Verify secure cookie flags
+curl -I https://your-server.com/login | grep -i set-cookie
+# Should include: HttpOnly; Secure; SameSite=Strict
+```
+
+### 6.2 Input Validation Testing
+
+```bash
+# Test for SQL Injection vulnerability
+curl "https://your-server.com/search?q=' OR '1'='1"
+
+# Test for XSS vulnerability
+curl "https://your-server.com/search?q=<script>alert('XSS')</script>"
+
+# Expected: Application should reject or sanitize malicious input
+```
+
+### 6.3 Logging Verification
+
+```bash
+# Check that failed login attempts are logged
+grep "Failed password" /var/log/auth.log  # Linux
+Get-WinEvent -FilterHashtable @{LogName='Security';Id=4625}  # Windows
+
+# Verify log integrity
+ls -la /var/log/
+# Logs should be owned by root with restricted permissions (e.g., 640)
+```
+
+### 6.4 Network Security Verification
+
+```bash
+# Verify HTTPS is enforced
+curl -I http://your-server.com
+# Should redirect to HTTPS
+
+# Check TLS configuration
+nmap --script ssl-enum-ciphers -p 443 your-server.com
+# Should show only TLS 1.2+ with strong ciphers
+
+# Verify firewall rules
+sudo ufw status verbose  # Ubuntu/Debian
+sudo firewall-cmd --list-all  # RHEL/CentOS
+netsh advfirewall show allprofiles  # Windows
+```
+
+## 7. References
 
 *   [OWASP Threat Modeling](https://owasp.org/www-community/Threat_Modeling)
 *   [Microsoft STRIDE Threat Model](https://learn.microsoft.com/en-us/azure/security/develop/threat-modeling-tool-stride)
+*   [OWASP Testing Guide](https://owasp.org/www-project-web-security-testing-guide/)
+*   [NIST Cybersecurity Framework](https://www.nist.gov/cyberframework)
+*   [CIS Controls](https://www.cisecurity.org/controls)
+
+## Appendix A: Template for Additional Threat Models
+
+Use this template when creating threat models for other systems:
+
+```markdown
+# [System Name] Threat Model
+
+## 1. System Description
+[Brief description of the system and its purpose]
+
+## 2. Data Flow Diagram
+[Mermaid diagram or description of data flows]
+
+## 3. Asset Identification
+* **Data**: [List critical data assets]
+* **Services**: [List critical services]
+* **Infrastructure**: [List infrastructure components]
+
+## 4. Threat Analysis (STRIDE)
+### 4.1 Spoofing
+[Threats, vulnerabilities, countermeasures]
+
+### 4.2 Tampering
+[Threats, vulnerabilities, countermeasures]
+
+[Continue for all STRIDE categories...]
+
+## 5. Risk Ratings
+[Risk rating table with DREAD scores]
+
+## 6. Verification Steps
+[Practical tests to verify countermeasures]
+
+## 7. References
+[Relevant links and documentation]
+```

@@ -24,6 +24,9 @@ This directory contains PowerShell scripts designed to automate various Windows 
 *   **`Manage-UserAccounts.ps1`**: Manages local user accounts, password policies, and LAPS configuration.
 *   **`Configure-WindowsFirewall.ps1`**: Configures Windows Firewall rules for essential services.
 *   **`Enable-BitLocker.ps1`**: Automates BitLocker drive encryption.
+*   **`Install-WindowsUpdates.ps1`**: Automates Windows Update configuration and installation (parity with Linux unattended-upgrades).
+*   **`Configure-WindowsAuditPolicy.ps1`**: Configures comprehensive audit policies for security logging (parity with Linux auditing_logging.yml).
+*   **`Configure-WindowsSecurityBaseline.ps1`**: Applies security baseline settings including network hardening and system hardening (parity with Linux kernel_hardening.yml and network_firewall.yml).
 
 ## ⚠️ Important Notes
 

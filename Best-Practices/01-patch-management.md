@@ -55,8 +55,82 @@ After deploying patches, monitor your systems to ensure they are functioning cor
 | **Linux**        | `apt`, `yum`, `dnf`, `unattended-upgrades`, `yum-cron`, Ansible, Puppet, Chef | Kernel updates often require reboots. Manage dependencies carefully. |
 | **Windows**      | Windows Update, WSUS, SCCM, Azure Update Management, PowerShell DSC | Group Policy Objects (GPOs) for domain-joined machines. Test thoroughly for application compatibility. |
 
-## 4. References
+## 4. Metadata
+
+*   **Difficulty**: Beginner
+*   **Time Estimate**: 2-4 hours for initial setup, 15-30 minutes weekly for maintenance
+*   **Prerequisites**: Basic understanding of package management and system administration
+*   **Applicable Systems**: Linux (Debian/Ubuntu, RHEL/CentOS), Windows Server
+*   **Compliance Frameworks**: NIST CSF (PR.IP-12), CIS Controls (7.1, 7.2), PCI DSS (6.2)
+
+## 5. Practical Examples
+
+### Example 1: Manual Patch Check on Linux
+
+```bash
+# Debian/Ubuntu - Check for available updates
+apt update && apt list --upgradable
+
+# RHEL/CentOS - Check for available updates
+yum check-update
+
+# View security-specific updates
+unattended-upgrade --dry-run -v  # Debian/Ubuntu
+yum updateinfo list security all  # RHEL/CentOS
+```
+
+### Example 2: Manual Patch Check on Windows
+
+```powershell
+# Check Windows Update status
+Get-WindowsUpdateLog
+
+# List pending updates (requires PSWindowsUpdate module)
+Import-Module PSWindowsUpdate
+Get-WindowsUpdate
+
+# Check update history
+Get-HotFix | Sort-Object InstalledOn -Descending | Select-Object -First 10
+```
+
+### Example 3: Automated Patch Verification Script
+
+```bash
+#!/bin/bash
+# patch_verification.sh - Simple patch status checker
+
+echo "=== Patch Status Report ==="
+echo "Date: $(date)"
+echo ""
+
+if command -v apt &> /dev/null; then
+    echo "[Linux - Debian/Ubuntu]"
+    apt update > /dev/null 2>&1
+    UPDATES=$(apt list --upgradable 2>/dev/null | wc -l)
+    echo "Available updates: $((UPDATES - 1))"
+    
+    SECURITY_UPDATES=$(grep -c "security" <(apt list --upgradable 2>/dev/null) || echo "0")
+    echo "Security updates: $SECURITY_UPDATES"
+elif command -v yum &> /dev/null; then
+    echo "[Linux - RHEL/CentOS]"
+    UPDATES=$(yum check-update 2>/dev/null | grep -c "^." || echo "0")
+    echo "Available updates: $UPDATES"
+fi
+
+echo ""
+echo "Last successful update:"
+if [ -f /var/log/apt/history.log ]; then
+    tail -5 /var/log/apt/history.log
+elif [ -f /var/log/yum.log ]; then
+    tail -5 /var/log/yum.log
+fi
+```
+
+## 6. Compliance Framework Mappings
+
+| Framework | Control ID | Requirement | How This Helps |\n|-----------|------------|-------------|----------------|\n| **NIST CSF** | PR.IP-12 | Vulnerabilities are identified and remediated | Establishes regular patching schedule |\n| **NIST CSF** | DE.CM-8 | Vulnerability scans are performed | Patch management addresses scan findings |\n| **CIS Controls v8** | 7.1 | Establish and maintain a vulnerability management process | Documents patch management procedures |\n| **CIS Controls v8** | 7.2 | Establish and maintain a risk-based patch management process | Prioritizes critical security patches |\n| **PCI DSS 4.0** | 6.2 | Develop and maintain secure systems and software | Ensures timely security patch installation |\n| **PCI DSS 4.0** | 11.2 | Run internal and external network vulnerability scans | Patch management addresses vulnerabilities |\n| **HIPAA** | 164.308(a)(5) | Security awareness and training | Includes patch management training |\n| **SOC 2** | CC7.1 | System is monitored to detect potential vulnerabilities | Patch monitoring and reporting |\n| **ISO 27001** | A.12.6.1 | Management of technical vulnerabilities | Formal vulnerability management process |\n\n## 7. References
 
 *   [NIST SP 800-40 Rev. 4 - Guide to Enterprise Patch Management Technologies](https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-40r4.pdf)
 *   [Microsoft Security Baselines](https://learn.microsoft.com/en-us/windows/security/threat-protection/windows-security-baselines)
 *   [CIS Benchmarks](https://www.cisecurity.org/cis-benchmarks/)
+*   [OWASP Patch Management Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Patch_Management_Cheat_Sheet.html)
