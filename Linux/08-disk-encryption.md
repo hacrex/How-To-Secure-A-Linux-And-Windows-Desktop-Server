@@ -18,9 +18,9 @@ Linux Unified Key Setup (LUKS) is the standard for disk encryption on Linux. It 
     sudo yum install cryptsetup -y  # RHEL/CentOS
     ```
 
-3.  **Encrypt the Device with LUKS**: This will create a LUKS header and encrypt the entire partition. You will be prompted to confirm and set a passphrase.
+3.  **Encrypt the Device with LUKS2**: LUKS2 is the modern standard, offering improved metadata handling and support for Argon2 key derivation. Use `--type luks2` explicitly for clarity.
     ```bash
-    sudo cryptsetup -y luksFormat /dev/sdb1
+    sudo cryptsetup -y --type luks2 luksFormat /dev/sdb1
     ```
 
 4.  **Open the LUKS Device**: This makes the encrypted volume accessible.
@@ -58,44 +58,49 @@ Linux Unified Key Setup (LUKS) is the standard for disk encryption on Linux. It 
 
 Encrypting the root filesystem is more complex and typically done during the operating system installation process. Most modern Linux installers (e.g., Ubuntu, Debian, Fedora) offer an option for full disk encryption during setup. This is the recommended approach for root filesystem encryption.
 
-## 2. Encrypting Specific Directories/Files with eCryptfs
+## 2. Encrypting Specific Directories/Files with fscrypt
 
-For encrypting individual user directories or specific sensitive files, `eCryptfs` provides a stacked cryptographic filesystem.
+For encrypting individual user directories or specific sensitive files, `fscrypt` provides a modern, native solution for ext4, F2FS, and UBIFS filesystems. It is the recommended replacement for the deprecated `eCryptfs`.
 
 ### Encrypting a User's Home Directory
 
-Many distributions offer tools to easily encrypt a user's home directory using `eCryptfs`.
-
-1.  **Install `ecryptfs-utils`**:
+1.  **Install `fscrypt`**:
     ```bash
-    sudo apt install ecryptfs-utils -y
+    sudo apt install fscrypt -y
     ```
 
-2.  **Encrypt Home Directory (for current user)**:
+2.  **Set Up fscrypt**:
     ```bash
-ecryptfs-migrate-home -u your_username
+    sudo fscrypt setup
     ```
-    Follow the prompts to set up your encrypted home directory. This tool moves your existing home directory content into an encrypted private directory.
+    When prompted, agree to load the `fscrypt` kernel module and set up a `/etc/fscrypt.conf`.
 
-### Manual `eCryptfs` Mount
-
-You can also manually mount an encrypted directory.
-
-1.  **Create Directories**:
+3.  **Encrypt the Home Directory**:
     ```bash
-mkdir ~/.private
+    fscrypt encrypt /home/your_username --source=pam_passphrase
+    ```
+    You will be prompted to set a passphrase. This passphrase is separate from your login password and protects the encryption key.
+
+4.  **Verify Encryption**:
+    ```bash
+    fscrypt status /home/your_username
+    ```
+
+### Manual fscrypt Mount
+
+You can also encrypt any directory on an fscrypt-supported filesystem:
+
+```bash
+# Create and encrypt a directory
 mkdir ~/Private
-    ```
-2.  **Mount `eCryptfs`**: 
-    ```bash
-mount -t ecryptfs ~/.private ~/Private
-    ```
-    You will be prompted for several options, including the passphrase and encryption cipher.
+fscrypt encrypt ~/Private --source=pam_passphrase
 
-3.  **Unmount `eCryptfs`**: 
-    ```bash
-umount ~/Private
-    ```
+# The directory is automatically unlocked on login if using pam_passphrase
+# To lock it manually:
+fscrypt lock ~/Private
+```
+
+> **Note**: `eCryptfs` (the older stacking filesystem) was removed from Ubuntu 18.04+ and is no longer maintained. Use `fscrypt` for new deployments.
 
 ## 3. Considerations for Disk Encryption
 

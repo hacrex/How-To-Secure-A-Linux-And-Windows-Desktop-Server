@@ -4,27 +4,135 @@ Effective management of user and service accounts is paramount to prevent unauth
 
 ## 1. User Account Security Hardening
 
-*   **Disable/Rename Default Accounts**: Disable the built-in guest account. Either rename the local Administrator account to a less predictable name or disable it entirely and create a new, uniquely named administrative account for daily use [2] [4].
-*   **Least Privilege**: Adhere strictly to the principle of least privilege. Grant users and processes only the minimum necessary rights and permissions required to perform their tasks. Minimize the membership and permissions of built-in groups like Administrators [2] [4].
-*   **Strong Passwords and Account Lockout**: Enforce strong password policies. Require passwords to be at least 14-16 characters long, using a mix of uppercase and lowercase letters, numbers, and special characters. Configure an account lockout policy (e.g., 3 failed attempts, 15-minute lockout duration) to prevent brute-force attacks [1] [2] [3] [4].
-*   **Disable Unused Accounts**: Promptly disable or delete user accounts that are no longer in use (e.g., for employees who have left the organization) [2] [4].
-*   **Local Administrator Password Solution (LAPS)**: Implement LAPS to manage local administrator passwords across domain-joined machines. LAPS enhances security by randomizing and regularly rotating these passwords, making it difficult for attackers to use compromised local admin credentials across multiple systems [3].
+### Disable/Rename Default Accounts
+
+Disable the built-in Guest account and rename or disable the Administrator account [2] [4].
+
+```powershell
+# Disable the Guest account
+Disable-LocalUser -Name "Guest"
+
+# Rename the built-in Administrator account
+Rename-LocalUser -Name "Administrator" -NewName "Admin-$(Get-Random -Minimum 1000 -Maximum 9999)"
+
+# Disable the built-in Administrator account (after creating a new admin account)
+Disable-LocalUser -Name "Administrator"
+
+# List all local accounts
+Get-LocalUser | Select-Object Name, Enabled, LastLogon, PasswordLastSet
+```
+
+### Enforce Strong Password Policies
+
+```powershell
+# Set password policy via secedit or Net Accounts
+# Minimum 14 characters, max 60 days, 1 password history
+net accounts /minpwlen:14 /maxpwage:60 /uniquepw:5
+
+# Or configure via Group Policy (preferred for domain-joined machines)
+# Computer Configuration > Windows Settings > Security Settings > Account Policies > Password Policy
+
+# Verify current password policy
+net accounts
+```
+
+### Configure Account Lockout Policy
+
+```powershell
+# Lock after 5 failed attempts, 15-minute lockout duration, reset counter after 15 minutes
+net accounts /lockoutthreshold:5 /lockoutduration:15 /lockoutwindow:15
+
+# Verify lockout settings
+net accounts
+```
+
+### Disable Unused Accounts
+
+```powershell
+# Find accounts that have never logged on or haven't logged on in 90 days
+Get-LocalUser | Where-Object {
+    $_.Enabled -eq $true -and
+    $_.Name -notin @("Administrator", "Guest", "DefaultAccount") -and
+    ($_.LastLogon -lt (Get-Date).AddDays(-90) -or $_.LastLogon -eq $null)
+} | Select-Object Name, LastLogon, PasswordLastSet
+
+# Disable stale accounts
+Get-LocalUser | Where-Object {
+    $_.Enabled -eq $true -and
+    $_.LastLogon -lt (Get-Date).AddDays(-90) -and
+    $_.Name -notin @("Administrator", "Guest")
+} | Disable-LocalUser
+```
+
+### Implement LAPS (Local Administrator Password Solution)
+
+LAPS randomizes and regularly rotates local administrator passwords across domain-joined machines [3].
+
+```powershell
+# Install LAPS module (on management workstation)
+Install-WindowsFeature -Name "RSAT-AD-PowerShell"
+
+# Import the LAPS module
+Import-Module AdmPwd.PS
+
+# View current LAPS password for a computer
+Get-ADComputer -Identity "SERVER01" -Properties ms-Mcs-AdmPwd | Select-Object Name, ms-Mcs-AdmPwd
+
+# To deploy LAPS, install the LAPS agent on target machines via Group Policy
+# See: https://learn.microsoft.com/en-us/windows-server/identity/laps/laps-overview
+```
 
 ## 2. Service Account Management
 
-Using dedicated, non-privileged accounts for services and applications is a critical security practice. Avoid running services under highly privileged accounts like `Local System` or `Administrator` unless absolutely necessary.
+Using dedicated, non-privileged accounts for services and applications is a critical security practice. Avoid running services under `Local System` or `Administrator` unless absolutely necessary [2].
 
-*   **Dedicated Service Accounts**: Create separate, dedicated accounts for each service or application. These accounts should have only the permissions required for the service to function correctly (least privilege) [2].
-*   **Managed Service Accounts (MSAs)**: Utilize Managed Service Accounts (MSAs) or Group Managed Service Accounts (gMSAs) in Active Directory environments. MSAs provide automatic password management and simplified service principal name (SPN) management, enhancing security and reducing administrative overhead [2].
-*   **Regular Password Changes**: If using standard user accounts as service accounts, ensure their passwords are changed regularly. However, MSAs are preferred as they automate this process.
-*   **Restrict Interactive Logon**: Configure service accounts to deny interactive logon rights, preventing them from being used to log into the server directly [2].
+### Audit Service Account Configurations
 
-## 3. Feature, Role, and Application Configuration
+```powershell
+# Find services running as LocalSystem or high-privilege accounts
+Get-CimInstance -ClassName Win32_Service | Where-Object {
+    $_.StartName -in @("LocalSystem", "NT AUTHORITY\\SYSTEM")
+} | Select-Object Name, DisplayName, StartName, StartMode
 
-Minimizing the attack surface involves removing unnecessary components:
+# Find services running as specific user accounts (potential service accounts)
+Get-CimInstance -ClassName Win32_Service | Where-Object {
+    $_.StartName -notlike "LocalSystem" -and
+    $_.StartName -notlike "NT AUTHORITY\\*" -and
+    $_.StartName -notlike "NT SERVICE\\*"
+} | Select-Object Name, DisplayName, StartName
+```
 
-*   **Remove Unnecessary Features/Roles**: Uninstall any Windows Server features and roles that are not essential for the server's intended function [4].
-*   **Minimize Applications and Services**: Restrict the installation of unnecessary applications and disable unneeded services and protocols [4].
+### Configure Service Accounts
+
+```powershell
+# Change a service to run as a dedicated account (not recommended for LocalSystem)
+# First create the service account, then:
+Set-Service -Name "YourServiceName" -StartupType Automatic
+# Use sc.exe for account configuration:
+sc.exe config "YourServiceName" obj= "DOMAIN\ServiceAccount" password= "SecurePassword"
+
+# Restrict interactive logon for service accounts via Group Policy:
+# Computer Configuration > Windows Settings > Security Settings > Local Policies > User Rights Assignment
+# Deny log on locally: Add service accounts here
+```
+
+## 3. Audit Local Group Memberships
+
+```powershell
+# Review members of sensitive groups
+Get-LocalGroupMember -Group "Administrators" | Select-Object Name, PrincipalSource, ObjectClass
+Get-LocalGroupMember -Group "Remote Desktop Users" | Select-Object Name
+Get-LocalGroupMember -Group "Backup Operators" | Select-Object Name
+
+# Find all users with admin privileges
+$adminGroups = @("Administrators", "Domain Admins", "Enterprise Admins", "Schema Admins")
+foreach ($group in $adminGroups) {
+    try {
+        Write-Host "`n=== $group ===" -ForegroundColor Yellow
+        Get-LocalGroupMember -Group $group -ErrorAction SilentlyContinue | Select-Object Name
+    } catch { }
+}
+```
 
 ## References
 

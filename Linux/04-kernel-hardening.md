@@ -52,8 +52,14 @@ fs.suid_dumpable = 0
 # Restrict access to kernel pointers in /proc/kallsyms
 kernel.kptr_restrict = 2
 
+# Restrict kernel log access to root only
+kernel.dmesg_restrict = 1
+
 # Disable SysRq key (magic SysRq key) to prevent system debugging by unauthorized users
 kernel.sysrq = 0
+
+# Disable unprivileged BPF to prevent eBPF-based attacks
+kernel.unprivileged_bpf_disabled = 1
 
 # Increase system file descriptor limit
 fs.file-max = 65535
@@ -74,9 +80,14 @@ net.ipv4.conf.all.proxy_arp = 0
 net.ipv4.conf.all.secure_redirects = 0
 net.ipv4.conf.default.forwarding = 0
 net.ipv4.conf.default.secure_redirects = 0
-net.ipv4.icmp_echo_ignore_all = 1
 net.ipv4.icmp_ignore_bogus_error_responses = 1
 net.ipv4.ip_forward = 0
+
+# ARP spoofing protection
+net.ipv4.conf.all.arp_announce = 2
+net.ipv4.conf.all.arp_ignore = 1
+net.ipv4.conf.default.arp_announce = 2
+net.ipv4.conf.default.arp_ignore = 1
 net.ipv4.ip_local_port_range = 2000 65000
 net.ipv4.ipfrag_high_thresh = 262144
 net.ipv4.ipfrag_low_thresh = 196608
@@ -104,18 +115,6 @@ net.ipv4.tcp_reordering = 3
 net.ipv4.tcp_retries1 = 3
 net.ipv4.tcp_retries2 = 15
 net.ipv4.tcp_rfc1337 = 1
-net.ipv4.tcp_rmem = 8192 87380 16777216
-net.ipv4.tcp_sack = 0
-net.ipv4.tcp_slow_start_after_idle = 0
-net.ipv4.tcp_syn_retries = 5
-net.ipv4.tcp_synack_retries = 2
-net.ipv4.tcp_timestamps = 1
-net.ipv4.tcp_tw_recycle = 0
-net.ipv4.tcp_tw_reuse = 1
-net.ipv4.tcp_window_scaling = 0
-net.ipv4.tcp_wmem = 8192 65536 16777216
-net.ipv4.udp_rmem_min = 16384
-net.ipv4.udp_wmem_min = 16384
 net.ipv6.conf.all.accept_ra=0
 net.ipv6.conf.all.accept_redirects = 0
 net.ipv6.conf.all.accept_source_route = 0
@@ -132,6 +131,8 @@ net.ipv6.conf.default.forwarding = 0
 ```
 
 **Disclaimer**: Some of these settings can impact system behavior or network connectivity. Always test changes in a non-production environment before applying them to production systems.
+
+> **Warning**: `net.ipv4.icmp_echo_ignore_all = 1` (disabled above for security) breaks Path MTU Discovery, which can cause connectivity issues with VPNs, large file transfers, and certain cloud services. If you experience these issues, remove this line and rely on `icmp_echo_ignore_broadcasts` instead.
 
 ## 2. Securing the `/proc` Filesystem
 

@@ -81,6 +81,6 @@ It is generally recommended to use the MAC system that is default for your chose
 
 ## References
 
-[1] [17 comprehensive container security best practices for 2026 - Sysdig](https://www.sysdig.com/learn-cloud-native/container-security-best-practices)
-[2] [25 Cloud Security Best Practices for AWS, Azure, and GCP](https://cloudaware.com/blog/cloud-security-best-practices/)
+[1] [SELinux Project Wiki](https://selinuxproject.org/)
+[2] [AppArmor - Ubuntu Wiki](https://help.ubuntu.com/community/AppArmor)
 [3] [SELinux vs AppArmor: The Hard Truth About Linux Security](https://tuxcare.com/blog/selinux-vs-apparmor/)

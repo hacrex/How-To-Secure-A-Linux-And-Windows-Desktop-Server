@@ -49,9 +49,13 @@ Using SSH keys instead of passwords for remote access significantly enhances sec
 
 ### Generate SSH Key Pair
 
-On your local machine, generate an SSH key pair:
+On your local machine, generate an SSH key pair. Ed25519 is recommended for new deployments due to its superior security and performance. RSA 4096-bit is a solid alternative for compatibility with older systems.
 
 ```bash
+# Recommended: Ed25519 (faster, more secure)
+ssh-keygen -t ed25519 -a 100
+
+# Alternative: RSA 4096-bit (better compatibility)
 ssh-keygen -t rsa -b 4096
 ```
 
@@ -141,9 +145,9 @@ For enhanced security, implement MFA for SSH access. This typically involves com
     auth required pam_google_authenticator.so
     ```
 3.  **Configure `sshd_config`**:
-    Edit `/etc/ssh/sshd_config` and ensure `ChallengeResponseAuthentication` is set to `yes`:
+    Edit `/etc/ssh/sshd_config` and ensure `KbdInteractiveAuthentication` is set to `yes`:
     ```ini
-    ChallengeResponseAuthentication yes
+    KbdInteractiveAuthentication yes
     # If using password authentication alongside MFA, ensure it's enabled:
     # PasswordAuthentication yes
     # UsePAM yes
@@ -159,3 +163,65 @@ sudo systemctl restart sshd
     ```
 
 Now, when users log in via SSH, they will be prompted for their verification code after their SSH key or password.
+
+## 5. SSH Server Hardening
+
+Harden the SSH server configuration in `/etc/ssh/sshd_config` to use only strong cryptographic algorithms and restrict unnecessary features.
+
+### Recommended `sshd_config` Settings
+
+```ini
+# Authentication
+LoginGraceTime 30
+MaxAuthTries 3
+MaxSessions 5
+PubkeyAuthentication yes
+PasswordAuthentication no
+PermitEmptyPasswords no
+PermitRootLogin no
+
+# Restrict to specific users/groups
+AllowUsers your_username
+# AllowGroups sshusers
+
+# Use only strong key exchange algorithms
+KexAlgorithms sntrup761x25519-sha512@openssh.com,curve25519-sha256,curve25519-sha256@libssh.org,diffie-hellman-group18-sha512,diffie-hellman-group16-sha512
+
+# Use only strong ciphers
+Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr
+
+# Use only strong MACs
+MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,hmac-sha2-512,hmac-sha2-256
+
+# Use only strong host key algorithms
+HostKeyAlgorithms ssh-ed25519,rsa-sha2-512,rsa-sha2-256
+
+# Disable unused features
+X11Forwarding no
+AllowTcpForwarding no
+AllowAgentForwarding no
+PermitTunnel no
+GatewayPorts no
+
+# Logging
+LogLevel VERBOSE
+
+# Idle timeout (disconnect after 15 minutes of inactivity)
+ClientAliveInterval 300
+ClientAliveCountMax 3
+```
+
+### Verify SSH Configuration
+
+After applying changes, verify the configuration and restart SSH:
+
+```bash
+# Test configuration syntax
+sudo sshd -t
+
+# Restart SSH service
+sudo systemctl restart sshd
+
+# Verify listening ciphers and algorithms (from a client)
+ssh -vv your_server 2>&1 | grep -E "kex:|cipher:|mac:"
+```

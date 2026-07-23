@@ -1,40 +1,157 @@
 # 06 - Windows Advanced Security Features and Baselines
 
-Leveraging advanced security features and established baselines is crucial for achieving a robust security posture in Windows Server environments. This section covers Microsoft-recommended baselines, industry standards, and specific security enhancements.
+Leveraging advanced security features and established baselines is crucial for achieving a robust security posture in Windows Server environments.
 
 ## 1. Microsoft Security Baselines
 
-Microsoft provides security baselines—groups of Microsoft-recommended configuration settings—that explain their security implications. These baselines are designed to enhance the security of Windows Server deployments.
+Microsoft provides security baselines—groups of recommended configuration settings [1] [3].
 
-*   **Utilize Microsoft Security Baselines**: Apply Microsoft-recommended security baselines for Windows Server (e.g., Windows Server 2025). These baselines include hundreds of security settings and can be deployed using tools like OSConfig, PowerShell, Windows Admin Center, or Azure Policy [1] [3].
-*   **Test Before Deployment**: Always test security baselines in a non-production environment before applying them to production systems, as they can change default behaviors and introduce compatibility issues [1].
+```powershell
+# Download and import security baselines
+# See: https://learn.microsoft.com/en-us/windows/security/operating-system-security/device-management/windows-security-configuration-framework/windows-security-baselines
 
-## 2. CIS Benchmarks for Windows Server
+# Apply Windows Server 2025 baseline using LGPO (Local Group Policy Object)
+# Download LGPO.exe from Microsoft
+lgpo.exe /g "path\to\baseline\folder"
 
-The Center for Internet Security (CIS) Benchmarks are consensus-based configuration guidelines developed to help organizations secure their systems. They provide detailed, prescriptive guidance for hardening Windows Server.
+# Verify applied security settings
+gpresult /h "$env:TEMP\security_report.html"
+Start-Process "$env:TEMP\security_report.html"
+```
 
-*   **Consider CIS Benchmarks**: Apply CIS Benchmarks for Windows Server to achieve a high level of security configuration. These benchmarks are widely recognized and provide a comprehensive set of recommendations [4].
+## 2. CIS Benchmarks
+
+Apply CIS Benchmarks for Windows Server for comprehensive hardening [4].
 
 ## 3. Secured-Core Server Features
 
-Secured-Core servers are designed to provide advanced protection against sophisticated attacks by integrating hardware, firmware, and operating system security features.
+Enable Secured-Core features if hardware supports it [1].
 
-*   **Enable Secured-Core Features**: If your hardware supports it, enable Secured-Core features such as UEFI Memory Access Protection (MAT), Secure Boot, and Signed Boot Chain. These features help protect the boot process and kernel from tampering [1].
+```powershell
+# Verify Secured-Core features status
+Get-CimInstance -ClassName Win32_DeviceGuard -Namespace root\Microsoft\Windows\DeviceGuard |
+    Select-Object VirtualizationBasedSecurityStatus, CodeIntegrityPolicyEnforcementStatus, UsermodeCodeIntegrityPolicyEnforcementStatus
 
-## 4. Credential Protection
+# Check if Secure Boot is enabled
+Confirm-SecureBootUEFI
 
-Protecting credentials from theft and misuse is a top priority for server security.
+# Check Virtualization-Based Security status
+Get-CimInstance -ClassName Win32_DeviceGuard -Namespace root\Microsoft\Windows\DeviceGuard |
+    Select-Object SecurityServicesRunning
+```
 
-*   **LSASS/PPL Protection**: Implement measures like Local Security Authority Subsystem Service (LSASS) protection and Protected Process Light (PPL) to safeguard credentials stored in memory. This makes it significantly harder for attackers to dump credentials from memory [1] [3].
+## 4. Windows Defender Credential Guard
 
-## 5. Microsoft Defender Antivirus
+Credential Guard uses virtualization-based security to isolate LSA secrets, preventing credential theft [1] [3].
 
-Microsoft Defender Antivirus provides robust endpoint protection capabilities built into Windows Server.
+```powershell
+# Check if Credential Guard is enabled
+Get-CimInstance -ClassName Win32_DeviceGuard -Namespace root\Microsoft\Windows\DeviceGuard |
+    Select-Object SecurityServicesRunning
 
-*   **Configure Microsoft Defender Antivirus**: Ensure Microsoft Defender Antivirus is properly configured and actively running. This includes:
-    *   **Attack Surface Reduction (ASR) Rules**: Implement ASR rules to prevent common attack techniques (e.g., blocking untrusted and executable content) [3].
-    *   **Device Control Policies**: Configure device control policies to regulate access to peripheral devices (e.g., USB drives, printers) to prevent data loss and malware infections [3].
-    *   **Regular Updates**: Ensure regular updates for security intelligence, engine, and platform to keep protection current against the latest threats [1] [3].
+# Enable Credential Guard via Group Policy or registry
+New-Item -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" -Force
+Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" -Name "LsaCfgFlags" -Value 1
+
+# Enable via Group Policy (preferred for domain-joined):
+# Computer Configuration > Administrative Templates > System > Device Guard
+# "Turn On Virtualization Based Security" = Enabled
+# "Credential Guard" = Enabled with UEFI lock
+```
+
+## 5. Just Enough Administration (JEA)
+
+JEA restricts PowerShell remoting sessions to only the commands and parameters needed for a specific task.
+
+```powershell
+# Create a JEA session configuration
+New-PSSessionConfigurationFile -Path "C:\JEA\JEAConfig.pssc" -SessionType RestrictedRemoteServer `
+    -RunAsVirtualAccount `
+    -TranscriptDirectory "C:\JEA\Transcripts" `
+    -LanguageMode NoLanguage `
+    -ExecutionPolicy Restricted
+
+# Define role capabilities (what commands are allowed)
+New-RoleCapabilityFile -Path "C:\JEA\ServerManagement.psrc" -VisibleCmdlets `
+    @{Name='Get-Service'}, @{Name='Restart-Service'}, @{Name='Get-Process'},
+    @{Name='Get-EventLog'}, @{Name='Get-WinEvent'}
+
+# Register the JEA endpoint
+Register-PSSessionConfiguration -Name "ServerManagement" -Path "C:\JEA\JEAConfig.pssc" -Force
+
+# Test JEA connection
+Enter-PSSession -ComputerName localhost -ConfigurationName "ServerManagement"
+
+# List registered session configurations
+Get-PSSessionConfiguration
+```
+
+## 6. Windows Defender Antivirus Hardening
+
+```powershell
+# Enable real-time protection
+Set-MpPreference -DisableRealtimeMonitoring $false
+
+# Enable cloud protection
+Set-MpPreference -MAPSReporting Advanced
+Set-MpPreference -SubmitSamplesConsent SendAllSamples
+
+# Configure ASR (Attack Surface Reduction) rules
+# Block Office applications from creating child processes
+Add-MpPreference -AttackSurfaceReductionRules_Ids D4F940AB-401B-4EFC-AADC-AD5831943542 -AttackSurfaceReductionRules_Actions Enabled
+
+# Block executable content from email client and webmail
+Add-MpPreference -AttackSurfaceReductionRules_Ids BE9BA2D9-53EA-4CDC-84E5-9B1EEEE46550 -AttackSurfaceReductionRules_Actions Enabled
+
+# Block all Office applications from creating child processes
+Add-MpPreference -AttackSurfaceReductionRules_Ids 75668C1F-73B5-4CF0-BB93-3ECF5CB7CC84 -AttackSurfaceReductionRules_Actions Enabled
+
+# Verify ASR rules status
+Get-MpPreference | Select-Object -ExpandProperty AttackSurfaceReductionRules_Ids
+```
+
+## 7. PowerShell Constrained Language Mode
+
+Restrict PowerShell to prevent execution of unauthorized scripts.
+
+```powershell
+# Enable Constrained Language Mode
+Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Session Management" -Name "ProtectionMode" -Value 1
+
+# Or via Group Policy:
+# Computer Configuration > Administrative Templates > Windows Components > Windows PowerShell
+# "Turn on PowerShell Script Block Logging" = Enabled
+# "Turn on Module Logging" = Enabled
+
+# Check current language mode
+$ExecutionContext.SessionState.LanguageMode
+
+# Enforce via AppLocker or WDAC (Windows Defender Application Control)
+```
+
+## 8. RDP Security Hardening
+
+```powershell
+# Enable NLA (Network Level Authentication)
+Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp" -Name "UserAuthentication" -Value 1
+
+# Set encryption to High
+Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp" -Name "MinEncryptionLevel" -Value 3
+
+# Limit concurrent sessions
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services" -Name "MaxInstanceCount" -Value 2
+
+# Set idle timeout (15 minutes)
+Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp" -Name "MaxIdleTime" -Value 900000
+
+# Disable clipboard and drive redirection
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services" -Name "fDisableClipRedirection" -Value 1
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services" -Name "fDisableCdm" -Value 1
+
+# Restrict RDP access to specific users/groups via Group Policy:
+# Computer Configuration > Windows Settings > Security Settings > Local Policies > User Rights Assignment
+# "Allow log on through Remote Desktop Services" = Add specific users only
+```
 
 ## References
 

@@ -125,9 +125,12 @@ OSSEC is a free, open-source Host-based Intrusion Detection System (HIDS) that p
 
 1.  **Install OSSEC**: Installation typically involves downloading the source and compiling, or using a package manager if available for your distribution.
     ```bash
-    # Example for Debian/Ubuntu (check official documentation for latest instructions)
-    sudo apt install ossec-hids-agent -y # For agent
-    sudo apt install ossec-hids-server -y # For server
+    # Debian/Ubuntu
+    sudo apt install ossec-hids-agent -y  # For agent
+    sudo apt install ossec-hids-server -y  # For server
+
+    # RHEL/CentOS 8+ (if available via EPEL)
+    sudo dnf install ossec-hids-agent -y
     ```
 2.  **Configure OSSEC**: Configure agents to report to a central OSSEC server for centralized monitoring and management.
 3.  **Monitor and Respond**: Regularly review OSSEC alerts and configure active responses to automatically block detected threats.
