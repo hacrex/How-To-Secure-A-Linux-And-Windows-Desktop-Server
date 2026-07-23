@@ -15,6 +15,7 @@ A comprehensive and evolving guide for securing both Linux and Windows server en
 - [Incident Response](./Incident-Response/README.md)
 - [Cloud Security](./Cloud-Security/README.md)
 - [Advanced Security Topics](./Advanced/README.md)
+- [Personal Desktop Hardening](./Desktop/README.md)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -97,6 +98,18 @@ For more details, see the [Cloud Security Section](./Cloud-Security/README.md).
 This section covers advanced security topics that are generally applicable to both Linux and Windows server environments, addressing modern infrastructure challenges like containerization and cloud deployments.
 
 For more details, see the [Advanced Security Topics](./Advanced/README.md).
+
+## 💻 Personal Desktop Hardening
+
+This section provides security hardening guides for personal desktop and mobile operating systems. Unlike server hardening, desktop hardening focuses on local user protection, privacy, and defense against everyday threats like malware, phishing, and physical access attacks.
+
+- **[Windows Desktop](./Desktop/01-windows-desktop.md)**: UAC, Defender, BitLocker, privacy settings, PowerShell logging
+- **[Linux Desktop](./Desktop/02-linux-desktop.md)**: Firewalls, LUKS encryption, AppArmor, USB restrictions
+- **[macOS](./Desktop/03-macos.md)**: FileVault, Gatekeeper, SIP, XProtect, privacy permissions
+- **[Chrome OS](./Desktop/04-chrome-os.md)**: Verified Boot, Safe Browsing, extension management
+- **[Android](./Desktop/05-android.md)**: Encryption, Play Protect, app permissions, VPN
+
+For the full guide, see the [Personal Desktop Hardening Section](./Desktop/README.md).
 
 ## 🤝 Contributing
 
