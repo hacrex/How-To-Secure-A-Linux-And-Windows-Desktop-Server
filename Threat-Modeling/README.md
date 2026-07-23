@@ -7,6 +7,9 @@ Threat modeling is a structured approach to identifying potential threats, vulne
 - [Introduction to Threat Modeling](#introduction-to-threat-modeling)
 - [01 - Web Application Server Threat Model](./01-web-application-server-threat-model.md)
 - [02 - Database Server Threat Model](./02-database-server-threat-model.md)
+- [03 - Cloud Server Threat Model](./03-cloud-server-threat-model.md)
+- [04 - API Threat Model](./04-api-threat-model.md)
+- [05 - IoT / Edge Device Threat Model](./05-iot-edge-device-threat-model.md)
 
 ## Introduction to Threat Modeling
 
@@ -19,3 +22,5 @@ Threat modeling helps organizations understand where their systems are vulnerabl
 5.  **Defining Countermeasures**: How can you mitigate or prevent the threats?
 
 Common methodologies for threat modeling include STRIDE (Spoofing, Tampering, Repudiation, Information Disclosure, Denial of Service, Elevation of Privilege) and DREAD (Damage, Reproducibility, Exploitability, Affected Users, Discoverability).
+
+This section provides threat models for five common deployment scenarios: web applications, databases, cloud servers, APIs, and IoT/edge devices.

@@ -10,6 +10,11 @@ This section covers advanced security topics that are generally applicable to bo
 - [03 - Security Monitoring and Incident Response](./03-security-monitoring-and-incident-response.md)
 - [04 - Kubernetes Security](./04-kubernetes-security.md)
 - [05 - Serverless Security](./05-serverless-security.md)
+- [06 - Supply Chain Security](./06-supply-chain-security.md)
+
+## Supply Chain Security
+
+Software supply chain attacks target the tools, libraries, and processes used to build software, rather than the software itself. The [Supply Chain Security guide](./06-supply-chain-security.md) covers SBOM generation, dependency verification, container image signing, CI/CD hardening, and the SLSA framework.
 
 ## Introduction
 
