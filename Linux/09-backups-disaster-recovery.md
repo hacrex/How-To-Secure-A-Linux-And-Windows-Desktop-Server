@@ -4,13 +4,15 @@ Regular backups and a well-defined disaster recovery plan are crucial components
 
 ## 1. Backup Strategy Fundamentals
 
-### 1.1. The 3-2-1 Backup Rule
+### 1.1. The 3-2-1-1-0 Backup Rule
 
-Adhere to the 3-2-1 backup rule, a widely accepted best practice:
+The 3-2-1 rule is a widely accepted baseline. The modern 3-2-1-1-0 variant adds critical protections against ransomware and data corruption:
 
-*   **3 copies of your data**: This includes the original data and at least two backups.
-*   **2 different media types**: Store backups on different types of storage (e.g., internal disk, external hard drive, network storage, cloud).
-*   **1 offsite copy**: Keep at least one backup copy in a separate geographical location to protect against site-specific disasters.
+*   **3 copies of your data**: The original data plus at least two backups.
+*   **2 different media types**: Store backups on different types of storage (e.g., internal disk, NAS, cloud).
+*   **1 offsite copy**: Keep at least one backup copy in a separate geographical location.
+*   **1 immutable or air-gapped copy**: At least one copy should be immutable (write-once, cannot be modified or deleted) or air-gapped (physically disconnected from the network). This protects against ransomware that targets backup systems.
+*   **0 errors after verification**: Regularly test and verify your backups by performing test restores. An untested backup is not a backup.
 
 ### 1.2. What to Back Up
 
@@ -67,7 +69,9 @@ sudo rsync -avz --delete -e ssh /source/path/ user@remote_host:/destination/path
     ```
 2.  **Initialize a Repository**:
     ```bash
-    borg init --encryption=repokey /path/to/backup/repo
+    # Recommended: authenticated and encrypted (repokey,auth)
+    # The repository key encrypts data; the auth key prevents tampering
+    borg init --encryption=repokey,auth /path/to/backup/repo
     ```
 3.  **Create a Backup Archive**:
     ```bash

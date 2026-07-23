@@ -14,3 +14,17 @@ This section covers advanced security topics that are generally applicable to bo
 ## Introduction
 
 As server environments become more complex, encompassing containerized applications and cloud deployments, security considerations extend beyond traditional operating system hardening. This section delves into these advanced areas, providing best practices and considerations for securing your entire infrastructure.
+
+### Zero Trust Architecture
+
+Zero Trust is a security model that assumes no implicit trust, even within the network perimeter. Every access request is verified, authenticated, and authorized regardless of origin [5].
+
+*   **Never Trust, Always Verify**: Authenticate and authorize every request, whether from inside or outside the network.
+*   **Least Privilege Access**: Grant only the minimum permissions needed for each task, with time-bound access where possible.
+*   **Assume Breach**: Design systems as if an attacker is already present. Segment networks, encrypt all traffic, and monitor continuously.
+
+Key Zero Trust technologies include identity-aware proxies, microsegmentation, mutual TLS, and software-defined perimeters. See [NIST SP 800-207](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-207.pdf) for the foundational framework.
+
+## References
+
+[5] [NIST SP 800-207 - Zero Trust Architecture](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-207.pdf)

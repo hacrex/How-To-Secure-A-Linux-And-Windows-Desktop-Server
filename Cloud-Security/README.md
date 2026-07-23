@@ -33,3 +33,27 @@ This section focuses on the customer's responsibilities, providing actionable gu
 *   **APIs require dedicated controls**: Inventory APIs, validate tokens and object-level authorization, enforce schema validation, rate limit abusive clients, protect secrets, and monitor for anomalous access.
 *   **Resilience is part of security**: Backups, tested recovery, autoscaling, rate limiting, graceful degradation, multi-zone design, and incident response playbooks reduce the impact of outages and attacks.
 *   **Continuous improvement is required**: Review configurations, rotate credentials, patch dependencies, test controls, update baselines, and incorporate lessons learned from incidents and audits.
+
+## Cloud Security Posture Management (CSPM) and Cloud Workload Protection (CWP)
+
+### CSPM
+
+CSPM continuously monitors cloud configurations against security benchmarks and compliance frameworks, automatically detecting misconfigurations.
+
+| Provider | CSPM Tool | Key Capabilities |
+|----------|-----------|-----------------|
+| AWS | AWS Security Hub, AWS Config | Compliance checks, CIS Benchmark scoring, aggregated findings |
+| Azure | Microsoft Defender for Cloud | Secure score, regulatory compliance, misconfiguration alerts |
+| GCP | Security Command Center Premium | Vulnerability scanning, threat detection, compliance monitoring |
+| Multi-cloud | Prisma Cloud, Wiz, Lacework | Cross-provider posture management |
+
+### CWPP
+
+CWPP protects workloads (VMs, containers, serverless) at runtime with threat detection, vulnerability management, and compliance enforcement.
+
+| Provider | CWPP Tool | Key Capabilities |
+|----------|-----------|-----------------|
+| AWS | Amazon Inspector, GuardDuty | Vulnerability scanning, threat detection |
+| Azure | Defender for Servers, Defender for Containers | Agent-based protection, runtime monitoring |
+| GCP | Event Threat Detection, Container Threat Detection | Log analysis, container runtime protection |
+| Multi-cloud | CrowdStrike Falcon, Sysdig Secure | Cross-provider workload protection |

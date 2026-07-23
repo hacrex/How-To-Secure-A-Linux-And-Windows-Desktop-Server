@@ -64,7 +64,8 @@ kernel.unprivileged_bpf_disabled = 1
 # Increase system file descriptor limit
 fs.file-max = 65535
 
-# Other network related settings for performance and security
+# Network performance and buffer tuning (optional, adjust for your workload)
+# These are not strictly security-related but are commonly hardened together
 net.core.default_qdisc = fq
 net.core.dev_weight = 64
 net.core.netdev_max_backlog = 16384

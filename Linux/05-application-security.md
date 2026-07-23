@@ -146,3 +146,116 @@ After any changes to Nginx configuration, always test the configuration and relo
 sudo nginx -t
 sudo systemctl reload nginx
 ```
+
+## 3. Securing Apache Web Server
+
+Apache is another widely-used web server. The following practices harden Apache against common attacks.
+
+### 3.1. Hide Server Version
+
+```apache
+# In apache2.conf or httpd.conf
+ServerTokens Prod
+ServerSignature Off
+```
+
+### 3.2. Disable Unnecessary Modules
+
+```bash
+# List enabled modules
+apache2ctl -M  # Debian/Ubuntu
+httpd -M       # RHEL/CentOS
+
+# Disable unnecessary modules (examples)
+sudo a2dismod status autoindex dir  # Debian/Ubuntu
+# Comment out LoadModule lines in httpd.conf for RHEL/CentOS
+```
+
+### 3.3. Configure Security Headers
+
+```apache
+# In your VirtualHost or .htaccess
+Header always set X-Content-Type-Options "nosniff"
+Header always set X-Frame-Options "SAMEORIGIN"
+Header always set X-XSS-Protection "1; mode=block"
+Header always set Referrer-Policy "strict-origin-when-cross-origin"
+Header always set Permissions-Policy "geolocation=(), camera=(), microphone=()"
+Header always set Content-Security-Policy "default-src 'self'"
+Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+```
+
+### 3.4. Restrict Access and Permissions
+
+```bash
+# Ensure Apache config files are not world-readable
+sudo chmod 640 /etc/apache2/apache2.conf  # Debian/Ubuntu
+sudo chown root:root /etc/apache2/apache2.conf
+
+# Set correct web root permissions
+sudo chown -R www-data:www-data /var/www/html
+sudo find /var/www/html -type d -exec chmod 755 {} \;
+sudo find /var/www/html -type f -exec chmod 644 {} \;
+
+# Disable directory listing
+# In apache2.conf or site config:
+# <Directory /var/www/html>
+#     Options -Indexes
+# </Directory>
+```
+
+### 3.5. Enable TLS and HSTS
+
+```apache
+# In your SSL VirtualHost
+SSLEngine on
+SSLProtocol all -SSLv3 -TLSv1 -TLSv1.1
+SSLCipherSuite ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384
+SSLHonorCipherOrder on
+Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+```
+
+## 4. Database Security Hardening
+
+Databases are high-value targets. Secure them regardless of the engine.
+
+### MySQL/MariaDB
+
+```bash
+# Run the security installation script
+mysql_secure_installation
+
+# Key steps:
+# - Set root password
+# - Remove anonymous users
+# - Disallow root login remotely
+# - Remove test database
+# - Reload privilege tables
+```
+
+### PostgreSQL
+
+```bash
+# Edit pg_hba.conf to restrict connections
+# Replace 'md5' or 'trust' with 'scram-sha-256' for password auth
+# Restrict host access to specific IPs:
+# host    all    all    10.0.1.0/24    scram-sha-256
+
+# Enable SSL for connections
+# In postgresql.conf:
+# ssl = on
+# ssl_cert_file = '/etc/ssl/certs/server.crt'
+# ssl_key_file = '/etc/ssl/private/server.key'
+
+# Reload configuration
+sudo systemctl reload postgresql
+```
+
+### General Database Hardening
+
+```bash
+# Use a dedicated non-root user for database services
+# Apply principle of least privilege for database accounts
+# Enable audit logging for all databases
+# Encrypt data at rest and in transit
+# Regularly backup and test restoration
+```

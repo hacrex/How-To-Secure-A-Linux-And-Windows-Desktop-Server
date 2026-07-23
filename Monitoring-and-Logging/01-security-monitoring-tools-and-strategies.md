@@ -13,7 +13,7 @@ Effective security monitoring is essential for detecting and responding to threa
 
 ### 2.1. Security Information and Event Management (SIEM)
 
-SIEM systems aggregate and analyze log data from various sources, providing a centralized view of security events.
+SIEM systems aggregate and analyze log data from various sources, providing a centralized view of security events [6].
 
 *   **Log Collection**: Collect logs from operating systems, applications, network devices, and security tools.
 *   **Correlation and Analysis**: Identify patterns and anomalies across disparate log sources to detect complex attacks.
@@ -21,6 +21,29 @@ SIEM systems aggregate and analyze log data from various sources, providing a ce
 *   **Reporting**: Provide dashboards and reports for compliance and security posture assessment.
 
 **Examples**: Splunk, Elastic Stack (ELK), Microsoft Sentinel, QRadar.
+
+#### SIEM Integration Checklist
+
+When deploying a SIEM, ensure you collect these critical log sources:
+
+| Source | What to Collect | Linux Path / Windows Source |
+|--------|----------------|---------------------------|
+| Authentication logs | Login success/failure, sudo usage | `/var/log/auth.log` (Linux), Security Event Log 4624/4625 (Windows) |
+| System logs | Service start/stop, kernel messages | `/var/log/syslog`, `journalctl` (Linux), System Event Log (Windows) |
+| Application logs | Web server, database, app errors | Application-specific paths |
+| Firewall logs | Allowed/dropped connections | UFW/iptables logs (Linux), Windows Firewall log |
+| DNS logs | Query/response traffic | DNS server logs |
+| Network flow data | Traffic patterns, bandwidth | NetFlow/IPFIX, VPC Flow Logs (cloud) |
+
+#### Recommended Log Retention
+
+| Log Type | Minimum Retention | Compliance Standard |
+|----------|------------------|-------------------|
+| Authentication | 1 year | PCI DSS, HIPAA |
+| Audit trails | 1 year | PCI DSS 10.7 |
+| System events | 90 days online, 1 year archive | NIST |
+| Application | 90 days | General best practice |
+| Network flow | 90 days | NIST 800-137 |
 
 ### 2.2. Intrusion Detection/Prevention Systems (IDPS)
 
@@ -67,3 +90,4 @@ Monitor network traffic for suspicious activities, unusual data flows, and indic
 
 *   [NIST SP 800-137 - Information Security Continuous Monitoring (ISCM) for Federal Information Systems and Organizations](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-137.pdf)
 *   [SANS Critical Security Controls - Control 8: Audit Log Management](https://www.cisecurity.org/controls/v8/)
+*   [NIST SP 800-92 - Guide to Computer Security Log Management](https://csrc.nist.gov/publications/detail/sp/800-92/final)
