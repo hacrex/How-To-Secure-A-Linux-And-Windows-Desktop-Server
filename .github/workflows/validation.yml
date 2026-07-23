@@ -22,7 +22,7 @@ jobs:
       
       - name: Lint Markdown files
         run: |
-          find . -name "*.md" -not -path "./.git/*" | xargs markdownlint --config .markdownlint.json || true
+          find . -name "*.md" -not -path "./.git/*" -not -path "./.mimocode/*" | xargs markdownlint --config .markdownlint.json
       
       - name: Check for broken links
         run: |
