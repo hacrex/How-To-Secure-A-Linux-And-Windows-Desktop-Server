@@ -254,8 +254,3 @@ This index was created as part of a comprehensive repo improvement session. The 
 - **3 new threat models** — Cloud Server, API, IoT/Edge Device
 - **Supply Chain Security** — SBOM, SLSA, dependency verification
 
-### Net Impact
-- **4 commits** to `main`
-- **38 files** created or modified
-- **~2,500 lines** of security content added
-- **70+ guides** covering every major platform and topic
