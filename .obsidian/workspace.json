@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "65e8068afc808b0f",
+        "id": "74b9f784d95b794d",
         "type": "tabs",
         "children": [
           {
-            "id": "0af558a3841b529b",
+            "id": "8868ff98f96f50f3",
             "type": "leaf",
             "state": {
               "type": "graph",
@@ -37,7 +37,7 @@
               "type": "file-explorer",
               "state": {
                 "sortOrder": "alphabetical",
-                "autoReveal": false
+                "autoReveal": true
               },
               "icon": "lucide-folder-closed",
               "title": "Files"
@@ -70,7 +70,8 @@
               "title": "Bookmarks"
             }
           }
-        ]
+        ],
+        "currentTab": 2
       }
     ],
     "direction": "horizontal",
@@ -176,8 +177,20 @@
       "bases:Create new base": false
     }
   },
-  "active": "0af558a3841b529b",
+  "active": "4e62fc1f158e52c8",
   "lastOpenFiles": [
+    "Untitled 2",
+    "2026-07-27.md",
+    "Untitled 1.canvas",
+    "Untitled 5.base",
+    "Untitled 4.base",
+    "Untitled 3.base",
+    "Untitled 2.base",
+    "Untitled 1.base",
+    "Untitled 1",
+    "Untitled",
+    "Untitled.canvas",
+    "Untitled.base",
     "SECURITY-GUIDE-INDEX.md",
     "Cloud-Security/README.md",
     "README.md",
